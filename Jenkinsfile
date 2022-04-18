@@ -1,29 +1,38 @@
 pipeline {
-    agent any
-    parameters {
-        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-
-        text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
-
-        booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value')
-
-        choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
-
-        password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
-    }
-    stages {
-        stage('Example') {
-            steps {
-                echo "Hello ${params.PERSON}"
-
-                echo "Biography: ${params.BIOGRAPHY}"
-
-                echo "Toggle: ${params.TOGGLE}"
-
-                echo "Choice: ${params.CHOICE}"
-
-                echo "Password: ${params.PASSWORD}"
-            }
-        }
-    }
+agent any
+tools {
+terraform 'terraform'
 }
+stages {
+stage ("checkout from GIT for Terraform files"){
+    steps {
+  git branch: 'main', credentialsId: 'first', url: 'https://github.com/pramod4555/Terraform.git'}
+}
+}
+stage ("terraform init")
+        steps {
+ sh 'terraform init'}
+ }
+ }
+ stage ("terraform fmt") {
+        steps {
+ sh 'terraform fmt'
+ }
+ }
+ stage {
+        steps {
+  sh 'terraform validate'
+  }
+  }
+  stage {
+        steps {
+   sh 'terraform plan'
+   }
+   }
+   stage {
+        steps{
+        sh 'terraform apply --auto-approve'
+        }
+        }
+        }
+        }
